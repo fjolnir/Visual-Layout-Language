@@ -1,11 +1,3 @@
-//
-//  FAAppDelegate.m
-//  VLLMacTest
-//
-//  Created by Fjölnir Ásgeirsson on 2/22/14.
-//  Copyright (c) 2014 Fjolnir. All rights reserved.
-//
-
 #import "FAAppDelegate.h"
 #import <VLL/VLLParser.h>
 
@@ -30,13 +22,14 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    
+    [[NSUserDefaults standardUserDefaults] setObject:@YES
+                                              forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
     VLLParser * parser = [VLLParser vllWithVLLName:@"test"
                                             bundle:[NSBundle mainBundle]];
     NSDictionary *views;
     [parser instantiate:&views inView:_window.contentView];
     [_window visualizeConstraints:[_window.contentView vll_recursiveConstraints]];
-    NSLog(@"%@", views);
+    NSLog(@"%@ -- %@", views, [_window.contentView vll_recursiveConstraints]);
 }
 
 @end

@@ -1,4 +1,4 @@
-H:|-[NSView#a] {
+H:|-[NSView#a]  {
     |-[NSTextField#child alphaValue = 0.4;
                     backgroundColor = $RGB(1,0,0);
                           textColor = $[NSColor colorWithWhite:0 alpha:1];
@@ -8,5 +8,5 @@ H:|-[NSView#a] {
 }-[NSView#b (==200)]-|
 V:|-60-[a]-|
 
-H:[a]-[NSView#c]-|
+H:[a]-[NSView#c]-40-|
 V:|-[b]-[c(==100)]-|

@@ -73,7 +73,7 @@
     ctx.viewStack = aContainer
                   ? [NSMutableArray arrayWithObject:aContainer]
                   : [NSMutableArray array];
-    ctx.orientationStack = [NSMutableArray array];
+    ctx.orientationStack = [NSMutableArray arrayWithObject:@(VLLLayoutConstraintAxisHorizontal)];
     ctx.views    = [NSMutableDictionary dictionary];
     ctx.rootViews = [NSMutableArray array];
     ctx.container = aContainer;

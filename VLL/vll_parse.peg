@@ -14,12 +14,12 @@
     #define StackPeek(ofs) yy->stack[[yy->stack count] + (ofs) - 1]
     #define PushStack(obj...) [yy->stack addObject:(obj)]
     #define PopStack() ({ id const top = StackTop; [yy->stack removeLastObject]; top; })
-    #define ReplaceStackTop(val) do { id repl = val; PopStack(); PushStack(repl); } while(0)
     
     // Orientation stack
-    #define Orientation [[yy->orientationStack lastObject] integerValue]
-    #define PushOrientation(orien...) [yy->orientationStack addObject:@(orien)]
-    #define PopOrientation() ({ NSInteger const top = Orientation; [yy->orientationStack removeLastObject]; top; })
+    #define Orientation [yy->orientationStack lastObject]
+    #define PushOrientation() [yy->orientationStack addObject:[yy->orientationStack lastObject]]
+    #define SetOrientation(orien...) yy->orientationStack[[yy->orientationStack count]-1] = orien
+    #define PopOrientation() ({ id const top = Orientation; [yy->orientationStack removeLastObject]; top; })
     
     // View stack
     #define CurrView ((VLLView *)[yy->viewStack lastObject])
@@ -30,16 +30,16 @@
 
 Layout   = Rule+ EOF
 
-Rule     = { PushStack([NSMutableDictionary dictionary]) }
-           Axis { PushOrientation([$$ integerValue]); }
+Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
+           Axis?
            (PIPE c:Conn { StackTop[@"leadingConstraints"] = c; })?
            view:View {
                PushView(view);
                if(StackTop[@"leadingConstraints"]) {
-                   NSLayoutAttribute attr = NSLayoutAttributeLeading;
-                   if(Orientation == VLLLayoutConstraintAxisVertical)
-                       attr = NSLayoutAttributeTop;
                    for(NSDictionary *pred in StackTop[@"leadingConstraints"]) {
+                       NSLayoutAttribute attr = NSLayoutAttributeLeading;
+                       if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical)
+                           attr = NSLayoutAttributeTop;
                        NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                             constraintWithItem:CurrView
                                                             attribute:attr
@@ -54,22 +54,23 @@ Rule     = { PushStack([NSMutableDictionary dictionary]) }
                    }
                }
            }
-           (Conn connectedView:View {
-               VLLView * const lastView = PopView();
+           (c:Conn connectedView:View {
+               VLLView * const previousView = PopView();
                PushView(connectedView);
                
-               NSLayoutAttribute attrA = NSLayoutAttributeTrailing;
-               NSLayoutAttribute attrB = NSLayoutAttributeLeading;
-               if(Orientation == VLLLayoutConstraintAxisVertical) {
-                   attrA = NSLayoutAttributeBottom;
-                   attrB = NSLayoutAttributeTop;
-               }
                for(NSDictionary *pred in c) {
+                   NSLayoutAttribute attrA = NSLayoutAttributeTrailing;
+                   NSLayoutAttribute attrB = NSLayoutAttributeLeading;
+                   
+                   if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical) {
+                       attrA = NSLayoutAttributeBottom;
+                       attrB = NSLayoutAttributeTop;
+                   }
                    NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                         constraintWithItem:CurrView
                                                         attribute:attrB
                                                         relatedBy:[pred[@"relation"] integerValue]
-                                                        toItem:lastView
+                                                        toItem:previousView
                                                         attribute:attrA
                                                         multiplier:1
                                                         constant:[pred[@"object"] doubleValue]];
@@ -79,10 +80,10 @@ Rule     = { PushStack([NSMutableDictionary dictionary]) }
                }
            })*
            (c:Conn PIPE {
-               NSLayoutAttribute attr = NSLayoutAttributeTrailing;
-               if(Orientation == VLLLayoutConstraintAxisVertical)
-                   attr = NSLayoutAttributeBottom;
                for(NSDictionary *pred in c) {
+                   NSLayoutAttribute attr = NSLayoutAttributeTrailing;
+                   if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical)
+                       attr = NSLayoutAttributeBottom;
                    NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                         constraintWithItem:LastView
                                                         attribute:attr
@@ -96,7 +97,7 @@ Rule     = { PushStack([NSMutableDictionary dictionary]) }
                    [LastView addConstraint:constr];
                }
            })?
-           { $$ = PopView(); PopOrientation(); }
+           { $$ = PopStack(); PopView(); PopOrientation(); }
 
 
 ## Views
@@ -115,11 +116,10 @@ ViewDef  = LBRACKET
                }
                Messages?
                (preds:PredicateList {
-                   NSLayoutAttribute attr = Orientation == VLLLayoutConstraintAxisHorizontal
-                                          ? NSLayoutAttributeWidth
-                                          : NSLayoutAttributeHeight;
-
                    for(NSDictionary *pred in preds) {
+                       NSLayoutAttribute attr = [pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisHorizontal
+                                              ? NSLayoutAttributeWidth
+                                              : NSLayoutAttributeHeight;
                        NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                             constraintWithItem:CurrView
                                                             attribute:attr
@@ -141,11 +141,10 @@ ViewIdent =                   { $$ = [[NSUUID UUID] UUIDString]; }
 
 ViewRef = LBRACKET ident:IDENT { PushStack(yy->views[ident]); }
           (preds:PredicateList {
-              NSLayoutAttribute attr = (Orientation == VLLLayoutConstraintAxisHorizontal)
-                                     ? NSLayoutAttributeWidth
-                                     : NSLayoutAttributeHeight;
-              
               for(NSDictionary *pred in preds) {
+                  NSLayoutAttribute attr = ([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisHorizontal)
+                                         ? NSLayoutAttributeWidth
+                                         : NSLayoutAttributeHeight;
                   NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                        constraintWithItem:StackTop
                                                        attribute:attr
@@ -181,28 +180,32 @@ SelPart  = IDENT|CONST
 
 ## Connections / Predicates
 Conn     = DASH preds:PredicateList DASH { $$ = preds; }
-         | DASH { $$ = @[@{ @"object": @20, @"relation": @(NSLayoutRelationEqual) }]; }
+         | DASH { $$ = @[@{ @"object": @20, @"relation": @(NSLayoutRelationEqual), @"orientation": Orientation }]; }
 
 PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": yy->views[obj] ?: obj,
-                                          @"relation": @(NSLayoutRelationEqual) }]; }
-              | LPAREN
+                                          @"relation": @(NSLayoutRelationEqual),
+                                          @"orientation": Orientation }]; }
+              | LPAREN { PushOrientation(); }
                     pred:Predicate { PushStack([NSMutableArray arrayWithObject:pred]); }
                     (COMMA pred:Predicate { [StackTop addObject:pred]; })*
                 RPAREN {
+                    PopOrientation();
                     $$ = PopStack();
                 }
-Predicate = rel:Relation obj:ObjOfPred prio:Priority {
+Predicate = Axis? rel:Relation obj:ObjOfPred prio:Priority {
     $$ = @{ @"relation": rel,
             @"object": yy->views[obj] ?: obj,
-            @"priority": prio };
+            @"priority": prio,
+            @"orientation": Orientation };
 }
 
 Priority = { $$ = @50 } (AT p:NUMBER { $$ = p; })?
 ObjOfPred = NUMBER|IDENT
 
 
-Axis     = 'V' COLON    { $$ = @(VLLLayoutConstraintAxisVertical);   }
-         | ('H' COLON)? { $$ = @(VLLLayoutConstraintAxisHorizontal); }
+Axis     = 'V' COLON { $$ = @(VLLLayoutConstraintAxisVertical);   SetOrientation($$); }
+         | 'H' COLON { $$ = @(VLLLayoutConstraintAxisHorizontal); SetOrientation($$); }
+
 
 Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
           | GEQ { $$ = @(NSLayoutRelationGreaterThanOrEqual); }
@@ -226,29 +229,29 @@ Object    = '$[' klass:CONST { PushStack(NSClassFromString(klass)); }
 
 
 ## Tokens
-IDENT     = <[a-z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
-CONST     = <[A-Z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
-STRING    = '"' < (!'"' .)* > '"' SPACING   { $$ = @(yytext); }
-NUMBER    = <[0-9]+ ('.' [0-9]+)* > SPACING { $$ = @(strtod(yytext, NULL)); }
+IDENT     = <[a-z] [a-zA-Z_0-9]*> -   { $$ = @(yytext); }
+CONST     = <[A-Z] [a-zA-Z_0-9]*> -   { $$ = @(yytext); }
+STRING    = '"' < (!'"' .)* > '"' -   { $$ = @(yytext); }
+NUMBER    = <[0-9]+ ('.' [0-9]+)* > - { $$ = @(strtod(yytext, NULL)); }
 
-LEQ       = '<=' SPACING
-GEQ       = '>=' SPACING
-EQ        = '==' SPACING
-ASGN      = '='  SPACING
-COLON     = ':'  SPACING
-SEMICOLON = ';'  SPACING
-COMMA     = ','  SPACING
-HASH      = '#'  SPACING
-LBRACE    = '{'  SPACING
-RBRACE    = '}'  SPACING
-LBRACKET  = '['  SPACING
-RBRACKET  = ']'  SPACING
-LPAREN    = '('  SPACING
-RPAREN    = ')'  SPACING
-DASH      = '-'  SPACING
-PIPE      = '|'  SPACING
-AT        = '@'  SPACING
-SPACING   = ( SPACE | COMMENT )*
+LEQ       = '<=' -
+GEQ       = '>=' -
+EQ        = '==' -
+ASGN      = '='  -
+COLON     = ':'  -
+SEMICOLON = ';'  -
+COMMA     = ','  -
+HASH      = '#'  -
+LBRACE    = '{'  -
+RBRACE    = '}'  -
+LBRACKET  = '['  -
+RBRACKET  = ']'  -
+LPAREN    = '('  -
+RPAREN    = ')'  -
+DASH      = '-'  -
+PIPE      = '|'  -
+AT        = '@'  -
+-         = ( SPACE | COMMENT )*
 SPACE     = ' ' | '\t' | EOL
 COMMENT   = '\\' ( !EOL . )* EOL
 EOL       = '\r\n' | '\n' | '\r'
