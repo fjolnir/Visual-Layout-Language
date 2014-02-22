@@ -44,7 +44,7 @@
     } while(0)
 %}
 
-Layout   = - Rule+ EOF
+Layout   = - Rule+ EOF ~{ SyntaxError(@""); }
 
 Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            Axis?
