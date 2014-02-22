@@ -1,5 +1,5 @@
-#import "VLLParser.h"
 @import ObjectiveC.runtime;
+#import "VLLParser.h"
 
 #define YY_CTX_MEMBERS \
     const char *inputBuf; \
@@ -23,6 +23,7 @@
     NSMutableArray *_rootViews;
 }
 @end
+
 @implementation VLLParser
 + (VLLParser *)vllWithVLLName:(NSString * const)aVLLName bundle:(NSBundle * const)aBundle
 {

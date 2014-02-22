@@ -1,5 +1,9 @@
 H:|-[NSView#a] {
-    |-[NSView#child(==200)]
+    |-[NSTextField#child alphaValue = 0.4;
+                    backgroundColor = $RGB(1,0,0);
+                          textColor = $RGB(0,1,0);
+                        stringValue = "Test..."
+                     (==200)]
     V:|-[child(==100)]
 }-[NSView#b (==200)]-|
 V:|-60-[a]-|

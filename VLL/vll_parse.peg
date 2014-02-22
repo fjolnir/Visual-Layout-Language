@@ -3,7 +3,8 @@
     @import ObjectiveC.runtime;
     #include <stdlib.h>
     #import "NSString+VLLExtensions.h"
-    
+    #import "NSInvocation+VLLExtensions.h"
+
     #define YYSTYPE id
     #define YY_CTX_LOCAL
 //  #define YY_DEBUG
@@ -172,7 +173,7 @@ Message  = { PushStack(@{  @"selector": [NSMutableString string],
                 invoc.selector = sel;
                 int i = 2;
                 for(id argument in $$[@"arguments"]) {
-                    [invoc setArgument:&argument atIndex:i++];
+                    [invoc vll_setArgument:argument atIndex:i++];
                 }
                 [invoc invoke];
             }

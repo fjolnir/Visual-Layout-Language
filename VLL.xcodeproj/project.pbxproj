@@ -36,6 +36,8 @@
 		C74CC06218B90A100070945E /* test.vll in Resources */ = {isa = PBXBuildFile; fileRef = C74CC06018B90A100070945E /* test.vll */; };
 		C74CC06518B90A2A0070945E /* VLL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74CBFEC18B908B30070945E /* VLL.framework */; };
 		C74CC06718B90A890070945E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C74CC06618B90A890070945E /* MainMenu.xib */; };
+		C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */; };
+		C74CC06B18B90C970070945E /* NSInvocation+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +82,8 @@
 		C74CC05F18B90A100070945E /* FAAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAAppDelegate.m; sourceTree = "<group>"; };
 		C74CC06018B90A100070945E /* test.vll */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.vll; sourceTree = "<group>"; };
 		C74CC06618B90A890070945E /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+VLLExtensions.h"; sourceTree = "<group>"; };
+		C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+VLLExtensions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +173,8 @@
 			children = (
 				C74CC01A18B908FF0070945E /* NSString+VLLExtensions.h */,
 				C74CC01B18B908FF0070945E /* NSString+VLLExtensions.m */,
+				C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */,
+				C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -205,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C74CC02218B908FF0070945E /* VLLParser.h in Headers */,
+				C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */,
 				C74CC01F18B908FF0070945E /* NSString+VLLExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -328,6 +335,7 @@
 			files = (
 				C74CC02018B908FF0070945E /* NSString+VLLExtensions.m in Sources */,
 				C74CC02318B908FF0070945E /* VLLParser.m in Sources */,
+				C74CC06B18B90C970070945E /* NSInvocation+VLLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
