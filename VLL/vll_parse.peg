@@ -103,7 +103,7 @@ ViewDef  = LBRACKET
                        [yy->rootViews addObject:view];
                    [CurrView addSubview:view];
                    PushView(view);
-                   PushStack(view);
+                   PushStack(view); // Messages are sent to the object at the top of the stack
                    if(ident) yy->views[ident] = view;
                }
                (preds:PredicateList {
@@ -125,36 +125,39 @@ ViewDef  = LBRACKET
 ViewIdent =                   { $$ = nil; }
             (HASH ident:IDENT { $$ = ident; })?
 
-ViewRef = LBRACKET ident:IDENT { PushStack(yy->views[ident]); }
+ViewRef = LBRACKET view:IDENT { view = yy->views[view]; }
           (preds:PredicateList {
               for(NSDictionary *pred in preds) {
                   [NSLayoutConstraint vll_addSizeConstraintsForAxis:[pred[@"orientation"] integerValue]
-                                                             onView:StackTop
+                                                             onView:view
                                                    toViewOrConstant:pred[@"object"]
                                                           relatedBy:[pred[@"relation"] integerValue]
                                                          multiplier:1
                                                            priority:[pred[@"priority"] integerValue]];
               }
-          })? RBRACKET { $$ = PopStack(); }
+          })? RBRACKET { $$ = view; }
 
 
 ## Message passing
 Messages = Message (SEMICOLON Message)*
 Message  = { PushStack(@{  @"selector": [NSMutableString string],
                           @"arguments": [NSMutableArray array] }); }
-           (name:SelPart COLON arg:Literal {
-             [StackTop[@"selector"] appendFormat:@"%@:", name];
-             [StackTop[@"arguments"] addObject:arg];
-            }
-            | name:SelPart ASGN arg:Literal {
-                [StackTop[@"selector"] appendFormat:@"set%@:", [name vll_capitalizedString]];
-                [StackTop[@"arguments"] addObject:arg];
-            })+ {
-                $$ = PopStack();
-                $$ = [yy->parserObj _sendMessageTo:StackTop
-                                          selector:NSSelectorFromString($$[@"selector"])
-                                         arguments:$$[@"arguments"]];
-            }
+           ((name:SelPart COLON arg:Literal {
+              [StackTop[@"selector"] appendFormat:@"%@:", name];
+              [StackTop[@"arguments"] addObject:arg];
+             }
+             | name:SelPart ASGN arg:Literal {
+                 [StackTop[@"selector"] appendFormat:@"set%@:", [name vll_capitalizedString]];
+                 [StackTop[@"arguments"] addObject:arg];
+             })+
+            | name:SelPart { [StackTop[@"selector"] setString:name] })
+           {
+               $$ = PopStack();
+               $$ = [yy->parserObj _sendMessageTo:StackTop
+                                         selector:NSSelectorFromString($$[@"selector"])
+                                        arguments:$$[@"arguments"]];
+           }
+
 SelPart  = IDENT|CONST
 
 
@@ -166,11 +169,11 @@ PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": obj,
                                           @"relation": @(NSLayoutRelationEqual),
                                           @"orientation": Orientation }]; }
               | LPAREN { PushOrientation(); }
-                    pred:Predicate { PushStack([NSMutableArray arrayWithObject:pred]); }
+                    preds:Predicate { preds = [NSMutableArray arrayWithObject:preds]; }
                     (COMMA pred:Predicate { [StackTop addObject:pred]; })*
                 RPAREN {
                     PopOrientation();
-                    $$ = PopStack();
+                    $$ = preds;
                 }
 Predicate = Axis?
                 rel:Relation ~{ SyntaxError(@"Expected ==/>=/<="); }
@@ -206,13 +209,13 @@ Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
 Literal   = NUMBER|STRING|Function|Object
 
 Function  = '$' name:CONST LPAREN {
-                PushStack([NSMutableArray array]); 
-                PushStack([name lowercaseString]); 
+                PushStack([NSMutableArray array]);
+                name = [name lowercaseString];
             }
-            (arg:Literal        { [StackPeek(-1) addObject:arg]; }
-             (COMMA arg:Literal { [StackPeek(-1) addObject:arg]; })*)?
+            (arg:Literal        { [StackTop addObject:arg]; }
+             (COMMA arg:Literal { [StackTop addObject:arg]; })*)?
             RPAREN {
-    $$ = [yy->parserObj _resolveFunction:PopStack() withParameters:PopStack()];
+    $$ = [yy->parserObj _resolveFunction:name withParameters:PopStack()];
 }
 Object    = '$[' klass:CONST { PushStack(NSClassFromString(klass)); }
                  m:Message ']' { $$ = m; PopStack(); }
