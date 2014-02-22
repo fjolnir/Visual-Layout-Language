@@ -13,13 +13,13 @@
     #define StackTop [yy->stack lastObject]
     #define StackPeek(ofs) yy->stack[[yy->stack count] + (ofs) - 1]
     #define PushStack(obj...) [yy->stack addObject:(obj)]
-    #define PopStack() StackTop; [yy->stack removeLastObject]
+    #define PopStack() ({ id const top = StackTop; [yy->stack removeLastObject]; top; })
     #define ReplaceStackTop(val) do { id repl = val; PopStack(); PushStack(repl); } while(0)
     
     // Orientation stack
     #define Orientation [[yy->orientationStack lastObject] integerValue]
     #define PushOrientation(orien...) [yy->orientationStack addObject:@(orien)]
-    #define PopOrientation() StackTop; [yy->orientationStack removeLastObject]
+    #define PopOrientation() Orientation; [yy->orientationStack removeLastObject]
     
     // View stack
     #define CurrView ((VLLView *)[yy->viewStack lastObject])
@@ -108,6 +108,7 @@ ViewDef  = LBRACKET
                        [yy->rootViews addObject:view];
                    [CurrView addSubview:view];
                    PushView(view);
+                   PushStack(view);
                    yy->views[ident] = view;
                }
                Messages?
@@ -131,7 +132,7 @@ ViewDef  = LBRACKET
            RBRACKET
            (LBRACE
                rule:Rule*
-            RBRACE)? { $$ = PopView(); }
+            RBRACE)? { $$ = PopView(); PopStack(); }
 
 ViewIdent =                   { $$ = [[NSUUID UUID] UUIDString]; }
             (HASH ident:IDENT { $$ = ident; })?
@@ -168,14 +169,15 @@ Message  = { PushStack(@{  @"selector": [NSMutableString string],
             })+ {
                 $$ = PopStack();
                 SEL const sel = NSSelectorFromString($$[@"selector"]);
-                NSInvocation * const invoc = [NSInvocation invocationWithMethodSignature:[CurrView methodSignatureForSelector:sel]];
-                invoc.target = CurrView;
+                NSInvocation * const invoc = [NSInvocation invocationWithMethodSignature:[StackTop methodSignatureForSelector:sel]];
+                invoc.target = StackTop;
                 invoc.selector = sel;
                 int i = 2;
                 for(id argument in $$[@"arguments"]) {
                     [invoc vll_setArgument:argument atIndex:i++];
                 }
                 [invoc invoke];
+                $$ = [invoc vll_getReturnValue];
             }
 SelPart  = IDENT|CONST
 
@@ -208,35 +210,25 @@ Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
           | GEQ { $$ = @(NSLayoutRelationGreaterThanOrEqual); }
           | EQ? { $$ = @(NSLayoutRelationEqual); }
      
-Literal   = NUMBER|STRING|COLOR
+Literal   = NUMBER|STRING|Function|Object
+
+Function  = '$' name:CONST LPAREN {
+                PushStack([NSMutableArray array]); 
+                PushStack([name lowercaseString]); 
+            }
+            (arg:Literal { [StackPeek(-1) addObject:arg]; }
+             (COMMA arg:Literal { [StackPeek(-1) addObject:arg]; })*)?
+            RPAREN {
+    $$ = [yy->parserObj _resolveFunction:PopStack() withParameters:PopStack()];
+}
+Object    = '$[' klass:CONST { PushStack(NSClassFromString(klass)); }
+                 m:Message ']' { $$ = m; PopStack(); NSLog(@"%@<---------", $$); }
 
 # Tokens
 IDENT     = <[a-z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
 CONST     = <[A-Z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
 STRING    = '"' < (!'"' .)* > '"' SPACING   { $$ = @(yytext); }
 NUMBER    = <[0-9]+ ('.' [0-9]+)* > SPACING { $$ = @(strtod(yytext, NULL)); }
-COLOR     = '$RGB' LPAREN r:NUMBER COMMA g:NUMBER COMMA b:NUMBER RPAREN {
-    $$ = [VLLColor colorWithRed:[r floatValue]
-                         green:[g floatValue]
-                          blue:[b floatValue]
-                         alpha:1]; }
-          | '$RGBA' LPAREN r:NUMBER COMMA g:NUMBER COMMA b:NUMBER COMMA a:NUMBER RPAREN {
-    $$ = [VLLColor colorWithRed:[r floatValue]
-                         green:[g floatValue]
-                          blue:[b floatValue]
-                         alpha:[a floatValue]]; }
-          | '$HSB' LPAREN h:NUMBER COMMA s:NUMBER COMMA b:NUMBER RPAREN {
-    $$ = [VLLColor colorWithHue:[h floatValue]
-                    saturation:[s floatValue]
-                    brightness:[b floatValue]
-                         alpha:1]; }
-          | '$HSBA' LPAREN h:NUMBER COMMA s:NUMBER COMMA b:NUMBER COMMA a:NUMBER RPAREN {
-    $$ = [VLLColor colorWithHue:[r floatValue]
-                    saturation:[g floatValue]
-                    brightness:[b floatValue]
-                         alpha:[a floatValue]]; }
-OBJECT    = '$[' CONST Message ']'
-    
 
 LEQ       = '<=' SPACING
 GEQ       = '>=' SPACING

@@ -67,4 +67,51 @@
                                          userInfo:nil];
     }
 }
+
+- (id)vll_getReturnValue
+{
+    if(self.methodSignature.methodReturnLength == 0)
+        return nil;
+    const char *type = [self.methodSignature methodReturnType];
+	if(*type == 'r') type++;
+    
+    void *buf = alloca(self.methodSignature.methodReturnLength);
+    [self getReturnValue:buf];
+    switch(*type) {
+        case _C_ID:
+        case _C_CLASS:
+            return *(__strong id *)buf;
+        case _C_CHR:
+            return @(*(char *)buf);
+        case _C_UCHR:
+            return @(*(unsigned char *)buf);
+        case _C_SHT:
+            return @(*(short *)buf);
+        case _C_USHT:
+            return @(*(unsigned short *)buf);
+        case _C_INT:
+            return @(*(int *)buf);
+        case _C_UINT:
+            return @(*(unsigned int *)buf);
+        case _C_LNG:
+            return @(*(long *)buf);
+        case _C_ULNG:
+            return @(*(unsigned long *)buf);
+        case _C_LNG_LNG:
+            return @(*(long long *)buf);
+        case _C_ULNG_LNG:
+            return @(*(unsigned long long *)buf);
+        case _C_FLT:
+            return @(*(float *)buf);
+        case _C_DBL:
+            return @(*(double *)buf);
+        case _C_BOOL:
+            return @(*(BOOL *)buf);
+        case _C_SEL:
+            return NSStringFromSelector(*(SEL *)buf);
+        default:
+            return nil;
+    }
+
+}
 @end

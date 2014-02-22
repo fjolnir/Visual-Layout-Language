@@ -1,7 +1,7 @@
 H:|-[NSView#a] {
     |-[NSTextField#child alphaValue = 0.4;
                     backgroundColor = $RGB(1,0,0);
-                          textColor = $RGB(0,1,0);
+                          textColor = $[NSColor colorWithWhite:0 alpha:1];
                         stringValue = "Test..."
                      (==200)]
     V:|-[child(==100)]

@@ -2,6 +2,7 @@
 #import "VLLParser.h"
 
 #define YY_CTX_MEMBERS \
+    VLLParser *parserObj; \
     const char *inputBuf; \
     NSMutableArray *stack, *orientationStack, *viewStack, *rootViews; \
     NSMutableDictionary *views; \
@@ -15,14 +16,16 @@
     } else \
         result = 0; \
 }
-#include "vll_parse.m"
 
 @interface VLLParser () {
     NSMutableData *_vllData;
     NSBundle *_bundle;
     NSMutableArray *_rootViews;
 }
+- (id)_resolveFunction:(NSString *)aFunctionName withParameters:(NSArray *)aParameters;
 @end
+
+#include "vll_parse.m"
 
 @implementation VLLParser
 + (VLLParser *)vllWithVLLName:(NSString * const)aVLLName bundle:(NSBundle * const)aBundle
@@ -65,6 +68,7 @@
     yycontext ctx;
     memset(&ctx, 0, sizeof(yycontext));
     ctx.inputBuf = _vllData.bytes;
+    ctx.parserObj = self;
     ctx.stack    = [NSMutableArray array];
     ctx.viewStack = aContainer
                   ? [NSMutableArray arrayWithObject:aContainer]
@@ -77,6 +81,29 @@
     if(aoViews) *aoViews = ctx.views;
     [aContainer updateConstraints];
     return ctx.rootViews;
+}
+
+- (id)_resolveFunction:(NSString *)aFunctionName withParameters:(NSArray *)aParameters
+{
+    if([aFunctionName isEqualToString:@"rgb"] || [aFunctionName isEqualToString:@"rgba"]) {
+        NSParameterAssert([aParameters count] >= 3);
+        return [VLLColor colorWithRed:[aParameters[0] floatValue]
+                                green:[aParameters[1] floatValue]
+                                 blue:[aParameters[2] floatValue]
+                                alpha:([aParameters count] > 3)
+                                      ? [aParameters[3] floatValue]
+                                      : 1];
+    }
+    else if([aFunctionName isEqualToString:@"hsb"] || [aFunctionName isEqualToString:@"hsba"]) {
+        NSParameterAssert([aParameters count] >= 3);
+        return [VLLColor colorWithHue:[aParameters[0] floatValue]
+                           saturation:[aParameters[1] floatValue]
+                           brightness:[aParameters[2] floatValue]
+                                alpha:([aParameters count] > 3)
+                                      ? [aParameters[3] floatValue]
+                                      : 1];
+    } else
+        return nil;
 }
 
 @end
