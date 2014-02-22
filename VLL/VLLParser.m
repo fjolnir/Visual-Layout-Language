@@ -52,7 +52,6 @@
     
     _vllData = [aData mutableCopy];
     [_vllData setLength:_vllData.length+1]; // NULL
-    NSLog(@"VLL:\n%s", _vllData.bytes);
     
     return self;
 }

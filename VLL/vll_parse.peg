@@ -19,13 +19,13 @@
     // Orientation stack
     #define Orientation [[yy->orientationStack lastObject] integerValue]
     #define PushOrientation(orien...) [yy->orientationStack addObject:@(orien)]
-    #define PopOrientation() Orientation; [yy->orientationStack removeLastObject]
+    #define PopOrientation() ({ NSInteger const top = Orientation; [yy->orientationStack removeLastObject]; top; })
     
     // View stack
     #define CurrView ((VLLView *)[yy->viewStack lastObject])
     #define LastView yy->viewStack[[yy->viewStack count] - 2]
     #define PushView(obj...) [yy->viewStack addObject:(obj)]
-    #define PopView() CurrView; [yy->viewStack removeLastObject]
+    #define PopView() ({ VLLView * const top = CurrView; [yy->viewStack removeLastObject]; top; })
 %}
 
 Layout   = Rule+ EOF

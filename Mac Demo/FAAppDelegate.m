@@ -36,6 +36,7 @@
     NSDictionary *views;
     [parser instantiate:&views inView:_window.contentView];
     [_window visualizeConstraints:[_window.contentView vll_recursiveConstraints]];
-    NSLog(@"%@", views);}
+    NSLog(@"%@", views);
+}
 
 @end
