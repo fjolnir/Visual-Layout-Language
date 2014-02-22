@@ -1,0 +1,8 @@
+H:|-[NSView#a] {
+    |-[NSView#child(==200)]
+    V:|-[child(==100)]
+}-[NSView#b (==200)]-|
+V:|-60-[a]-|
+
+H:[a]-[NSView#c]-|
+V:|-[b]-[c(==100)]-|
