@@ -2,11 +2,10 @@ H:|-[NSView#a]  {
     |-[NSTextField#child(==200) alphaValue = 0.4;
                            backgroundColor = $RGB(1,0,0);
                                  textColor = $[NSColor greenColor];
-                               stringValue = "Test..."
-                     ]
+                               stringValue = "Test..."]
     V:|-[child(==100)]
 }-[NSView#b (==200)]-|
-V:|-60-[a]-|
+V:|-[a]-|
 
-H:[a]-[NSView#c]-40-|
-V:|-[b]-[c(==100)]-|
+H:[a]-[NSView#c(H:==b, V:==150)]-|
+V:|-[b]-[c]-|

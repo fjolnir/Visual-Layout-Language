@@ -170,7 +170,7 @@ PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": obj,
                                           @"orientation": Orientation }]; }
               | LPAREN { PushOrientation(); }
                     preds:Predicate { preds = [NSMutableArray arrayWithObject:preds]; }
-                    (COMMA pred:Predicate { [StackTop addObject:pred]; })*
+                    (COMMA pred:Predicate { [preds addObject:pred]; })*
                 RPAREN {
                     PopOrientation();
                     $$ = preds;
