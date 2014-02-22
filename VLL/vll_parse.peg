@@ -98,6 +98,8 @@ Rule     = { PushStack([NSMutableDictionary dictionary]) }
            })?
            { $$ = PopView(); PopOrientation(); }
 
+
+## Views
 View     = ViewDef | ViewRef
 
 ViewDef  = LBRACKET
@@ -156,6 +158,8 @@ ViewRef = LBRACKET ident:IDENT { PushStack(yy->views[ident]); }
               }
           })? RBRACKET { $$ = PopStack(); }
 
+
+## Message passing
 Messages = Message (SEMICOLON Message)*
 Message  = { PushStack(@{  @"selector": [NSMutableString string],
                           @"arguments": [NSMutableArray array] }); }
@@ -168,19 +172,14 @@ Message  = { PushStack(@{  @"selector": [NSMutableString string],
                 [StackTop[@"arguments"] addObject:arg];
             })+ {
                 $$ = PopStack();
-                SEL const sel = NSSelectorFromString($$[@"selector"]);
-                NSInvocation * const invoc = [NSInvocation invocationWithMethodSignature:[StackTop methodSignatureForSelector:sel]];
-                invoc.target = StackTop;
-                invoc.selector = sel;
-                int i = 2;
-                for(id argument in $$[@"arguments"]) {
-                    [invoc vll_setArgument:argument atIndex:i++];
-                }
-                [invoc invoke];
-                $$ = [invoc vll_getReturnValue];
+                $$ = [yy->parserObj _sendMessageTo:StackTop
+                                          selector:NSSelectorFromString($$[@"selector"])
+                                         arguments:$$[@"arguments"]];
             }
 SelPart  = IDENT|CONST
 
+
+## Connections / Predicates
 Conn     = DASH preds:PredicateList DASH { $$ = preds; }
          | DASH { $$ = @[@{ @"object": @20, @"relation": @(NSLayoutRelationEqual) }]; }
 
@@ -198,8 +197,7 @@ Predicate = rel:Relation obj:ObjOfPred prio:Priority {
             @"priority": prio };
 }
 
-Priority = { $$ = @50 }
-           (AT p:NUMBER { $$ = p; })?
+Priority = { $$ = @50 } (AT p:NUMBER { $$ = p; })?
 ObjOfPred = NUMBER|IDENT
 
 
@@ -209,22 +207,25 @@ Axis     = 'V' COLON    { $$ = @(VLLLayoutConstraintAxisVertical);   }
 Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
           | GEQ { $$ = @(NSLayoutRelationGreaterThanOrEqual); }
           | EQ? { $$ = @(NSLayoutRelationEqual); }
-     
+
+
+## Literals
 Literal   = NUMBER|STRING|Function|Object
 
 Function  = '$' name:CONST LPAREN {
                 PushStack([NSMutableArray array]); 
                 PushStack([name lowercaseString]); 
             }
-            (arg:Literal { [StackPeek(-1) addObject:arg]; }
+            (arg:Literal        { [StackPeek(-1) addObject:arg]; }
              (COMMA arg:Literal { [StackPeek(-1) addObject:arg]; })*)?
             RPAREN {
     $$ = [yy->parserObj _resolveFunction:PopStack() withParameters:PopStack()];
 }
 Object    = '$[' klass:CONST { PushStack(NSClassFromString(klass)); }
-                 m:Message ']' { $$ = m; PopStack(); NSLog(@"%@<---------", $$); }
+                 m:Message ']' { $$ = m; PopStack(); }
 
-# Tokens
+
+## Tokens
 IDENT     = <[a-z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
 CONST     = <[A-Z] [a-zA-Z_0-9]*> SPACING   { $$ = @(yytext); }
 STRING    = '"' < (!'"' .)* > '"' SPACING   { $$ = @(yytext); }

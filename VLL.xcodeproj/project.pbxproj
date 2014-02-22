@@ -69,7 +69,7 @@
 		C74CC00418B908B30070945E /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		C74CC01A18B908FF0070945E /* NSString+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+VLLExtensions.h"; sourceTree = "<group>"; };
 		C74CC01B18B908FF0070945E /* NSString+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+VLLExtensions.m"; sourceTree = "<group>"; };
-		C74CC01C18B908FF0070945E /* vll_parse.peg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vll_parse.peg; sourceTree = "<group>"; };
+		C74CC01C18B908FF0070945E /* vll_parse.peg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vll_parse.peg; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		C74CC01D18B908FF0070945E /* VLLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLLParser.h; sourceTree = "<group>"; };
 		C74CC01E18B908FF0070945E /* VLLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLLParser.m; sourceTree = "<group>"; };
 		C74CC03118B909EC0070945E /* Mac Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mac Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };

@@ -23,6 +23,7 @@
     NSMutableArray *_rootViews;
 }
 - (id)_resolveFunction:(NSString *)aFunctionName withParameters:(NSArray *)aParameters;
+- (id)_sendMessageTo:(id)aTarget selector:(SEL)aSel arguments:(NSArray *)aArgs;
 @end
 
 #include "vll_parse.m"
@@ -83,6 +84,8 @@
     return ctx.rootViews;
 }
 
+#pragma mark -
+
 - (id)_resolveFunction:(NSString *)aFunctionName withParameters:(NSArray *)aParameters
 {
     if([aFunctionName isEqualToString:@"rgb"] || [aFunctionName isEqualToString:@"rgba"]) {
@@ -106,4 +109,17 @@
         return nil;
 }
 
+- (id)_sendMessageTo:(id const)aTarget selector:(SEL const)aSel arguments:(NSArray * const)aArgs
+{
+    NSMethodSignature * const sig = [aTarget methodSignatureForSelector:aSel];
+    NSInvocation * const invoc = [NSInvocation invocationWithMethodSignature:sig];
+    invoc.target = aTarget;
+    invoc.selector = aSel;
+    int i = 2;
+    for(id argument in aArgs) {
+        [invoc vll_setArgument:argument atIndex:i++];
+    }
+    [invoc invoke];
+    return [invoc vll_getReturnValue];
+}
 @end
