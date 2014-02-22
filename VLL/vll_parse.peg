@@ -26,6 +26,13 @@
     #define LastView yy->viewStack[[yy->viewStack count] - 2]
     #define PushView(obj...) [yy->viewStack addObject:(obj)]
     #define PopView() ({ VLLView * const top = CurrView; [yy->viewStack removeLastObject]; top; })
+    
+    #define VLLAxisToDimension(axis) (axis) == VLLLayoutConstraintAxisHorizontal ? NSLayoutAttributeWidth \
+                                                                                 : NSLayoutAttributeHeight
+    #define VLLAxisToLeadingEdge(axis) (axis) == VLLLayoutConstraintAxisHorizontal ? NSLayoutAttributeLeading \
+                                                                                   : NSLayoutAttributeTop
+    #define VLLAxisToTrailingEdge(axis) (axis) == VLLLayoutConstraintAxisHorizontal ? NSLayoutAttributeTrailing \
+                                                                                    : NSLayoutAttributeBottom
 %}
 
 Layout   = Rule+ EOF
@@ -37,15 +44,12 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
                PushView(view);
                if(StackTop[@"leadingConstraints"]) {
                    for(NSDictionary *pred in StackTop[@"leadingConstraints"]) {
-                       NSLayoutAttribute attr = NSLayoutAttributeLeading;
-                       if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical)
-                           attr = NSLayoutAttributeTop;
                        NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                             constraintWithItem:CurrView
-                                                            attribute:attr
+                                                            attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
                                                             relatedBy:[pred[@"relation"] integerValue]
                                                             toItem:LastView
-                                                            attribute:attr
+                                                            attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
                                                             multiplier:1
                                                             constant:[pred[@"object"] doubleValue]];
                        if([pred[@"priority"] floatValue] > 0)
@@ -59,19 +63,12 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
                PushView(connectedView);
                
                for(NSDictionary *pred in c) {
-                   NSLayoutAttribute attrA = NSLayoutAttributeTrailing;
-                   NSLayoutAttribute attrB = NSLayoutAttributeLeading;
-                   
-                   if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical) {
-                       attrA = NSLayoutAttributeBottom;
-                       attrB = NSLayoutAttributeTop;
-                   }
                    NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                         constraintWithItem:CurrView
-                                                        attribute:attrB
+                                                        attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
                                                         relatedBy:[pred[@"relation"] integerValue]
                                                         toItem:previousView
-                                                        attribute:attrA
+                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
                                                         multiplier:1
                                                         constant:[pred[@"object"] doubleValue]];
                    if([pred[@"priority"] floatValue] > 0)
@@ -81,15 +78,12 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            })*
            (c:Conn PIPE {
                for(NSDictionary *pred in c) {
-                   NSLayoutAttribute attr = NSLayoutAttributeTrailing;
-                   if([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisVertical)
-                       attr = NSLayoutAttributeBottom;
                    NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                         constraintWithItem:LastView
-                                                        attribute:attr
+                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
                                                         relatedBy:[pred[@"relation"] integerValue]
                                                         toItem:CurrView
-                                                        attribute:attr
+                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
                                                         multiplier:1
                                                         constant:[pred[@"object"] doubleValue]];
                    if([pred[@"priority"] floatValue] > 0)
@@ -112,47 +106,45 @@ ViewDef  = LBRACKET
                    [CurrView addSubview:view];
                    PushView(view);
                    PushStack(view);
-                   yy->views[ident] = view;
+                   if(ident) yy->views[ident] = view;
                }
-               Messages?
                (preds:PredicateList {
                    for(NSDictionary *pred in preds) {
-                       NSLayoutAttribute attr = [pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisHorizontal
-                                              ? NSLayoutAttributeWidth
-                                              : NSLayoutAttributeHeight;
                        NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                             constraintWithItem:CurrView
-                                                            attribute:attr
+                                                            attribute:VLLAxisToDimension([pred[@"orientation"] integerValue])
                                                             relatedBy:[pred[@"relation"] integerValue]
                                                             toItem:nil
                                                             attribute:NSLayoutAttributeNotAnAttribute
                                                             multiplier:1
                                                             constant:[pred[@"object"] doubleValue]];
+                       if([pred[@"priority"] floatValue] > 0)
+                           constr.priority = [pred[@"priority"] floatValue];
                        [LastView addConstraint:constr];
                    }
                })?
+               Messages?
            RBRACKET
            (LBRACE
                rule:Rule*
             RBRACE)? { $$ = PopView(); PopStack(); }
 
-ViewIdent =                   { $$ = [[NSUUID UUID] UUIDString]; }
+ViewIdent =                   { $$ = nil; }
             (HASH ident:IDENT { $$ = ident; })?
 
 ViewRef = LBRACKET ident:IDENT { PushStack(yy->views[ident]); }
           (preds:PredicateList {
               for(NSDictionary *pred in preds) {
-                  NSLayoutAttribute attr = ([pred[@"orientation"] integerValue] == VLLLayoutConstraintAxisHorizontal)
-                                         ? NSLayoutAttributeWidth
-                                         : NSLayoutAttributeHeight;
                   NSLayoutConstraint * const constr = [NSLayoutConstraint
                                                        constraintWithItem:StackTop
-                                                       attribute:attr
+                                                       attribute:VLLAxisToDimension([pred[@"orientation"] integerValue])
                                                        relatedBy:[pred[@"relation"] integerValue]
                                                        toItem:nil
                                                        attribute:NSLayoutAttributeNotAnAttribute
                                                        multiplier:1
                                                        constant:[pred[@"object"] doubleValue]];
+                  if([pred[@"priority"] floatValue] > 0)
+                      constr.priority = [pred[@"priority"] floatValue];
                   [LastView addConstraint:constr];
               }
           })? RBRACKET { $$ = PopStack(); }

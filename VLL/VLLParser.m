@@ -67,17 +67,19 @@
 {
     yycontext ctx;
     memset(&ctx, 0, sizeof(yycontext));
-    ctx.inputBuf = _vllData.bytes;
+    ctx.inputBuf  = _vllData.bytes;
     ctx.parserObj = self;
-    ctx.stack    = [NSMutableArray array];
+    ctx.container = aContainer;
+    ctx.views     = [NSMutableDictionary dictionary];
+    ctx.rootViews = [NSMutableArray array];
+    ctx.stack     = [NSMutableArray array];
     ctx.viewStack = aContainer
                   ? [NSMutableArray arrayWithObject:aContainer]
                   : [NSMutableArray array];
     ctx.orientationStack = [NSMutableArray arrayWithObject:@(VLLLayoutConstraintAxisHorizontal)];
-    ctx.views    = [NSMutableDictionary dictionary];
-    ctx.rootViews = [NSMutableArray array];
-    ctx.container = aContainer;
+    
     while(yyparse(&ctx));
+    
     if(aoViews) *aoViews = ctx.views;
     [aContainer updateConstraints];
     return ctx.rootViews;
