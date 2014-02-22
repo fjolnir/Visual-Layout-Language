@@ -4,6 +4,7 @@
     #include <stdlib.h>
     #import "NSString+VLLExtensions.h"
     #import "NSInvocation+VLLExtensions.h"
+    #import "NSLayoutConstraint+VLLExtensions.h"
 
     #define YYSTYPE id
     #define YY_CTX_LOCAL
@@ -49,21 +50,17 @@ Layout   = - Rule+ EOF ~{ SyntaxError(@""); }
 Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            Axis?
            (PIPE c:Conn { StackTop[@"leadingConstraints"] = c; })?
-           view:View {
-               PushView(view);
+           View {
+               PushView($$);
                if(StackTop[@"leadingConstraints"]) {
                    for(NSDictionary *pred in StackTop[@"leadingConstraints"]) {
-                       NSLayoutConstraint * const constr = [NSLayoutConstraint
-                                                            constraintWithItem:CurrView
-                                                            attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
-                                                            relatedBy:[pred[@"relation"] integerValue]
-                                                            toItem:LastView
-                                                            attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
-                                                            multiplier:1
-                                                            constant:[pred[@"object"] doubleValue]];
-                       if([pred[@"priority"] floatValue] > 0)
-                           constr.priority = [pred[@"priority"] floatValue];
-                       [LastView addConstraint:constr];
+                        [NSLayoutConstraint vll_addLeadingEdgeConstraintsForAxis:[pred[@"orientation"] integerValue]
+                                                                            view:CurrView
+                                                                       superview:LastView
+                                                                       relatedBy:[pred[@"relation"] integerValue]
+                                                                      multiplier:1
+                                                                        constant:[pred[@"object"] doubleValue]
+                                                                        priority:[pred[@"priority"] floatValue]];
                    }
                }
            }
@@ -72,32 +69,24 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
                PushView(connectedView);
                
                for(NSDictionary *pred in c) {
-                   NSLayoutConstraint * const constr = [NSLayoutConstraint
-                                                        constraintWithItem:CurrView
-                                                        attribute:VLLAxisToLeadingEdge([pred[@"orientation"] integerValue])
-                                                        relatedBy:[pred[@"relation"] integerValue]
-                                                        toItem:previousView
-                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
-                                                        multiplier:1
-                                                        constant:[pred[@"object"] doubleValue]];
-                   if([pred[@"priority"] floatValue] > 0)
-                       constr.priority = [pred[@"priority"] floatValue];
-                   [LastView addConstraint:constr];
+                    [NSLayoutConstraint vll_addSpacingConstraintsForAxis:[pred[@"orientation"] integerValue]
+                                                               firstView:CurrView
+                                                              secondView:previousView
+                                                               relatedBy:[pred[@"relation"] integerValue]
+                                                              multiplier:1
+                                                                constant:[pred[@"object"] doubleValue]
+                                                                priority:[pred[@"priority"] floatValue]];
                }
            })*
            (c:Conn PIPE {
                for(NSDictionary *pred in c) {
-                   NSLayoutConstraint * const constr = [NSLayoutConstraint
-                                                        constraintWithItem:LastView
-                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
-                                                        relatedBy:[pred[@"relation"] integerValue]
-                                                        toItem:CurrView
-                                                        attribute:VLLAxisToTrailingEdge([pred[@"orientation"] integerValue])
-                                                        multiplier:1
-                                                        constant:[pred[@"object"] doubleValue]];
-                   if([pred[@"priority"] floatValue] > 0)
-                       constr.priority = [pred[@"priority"] floatValue];
-                   [LastView addConstraint:constr];
+                    [NSLayoutConstraint vll_addTrailingEdgeConstraintsForAxis:[pred[@"orientation"] integerValue]
+                                                                         view:CurrView
+                                                                    superview:LastView
+                                                                    relatedBy:[pred[@"relation"] integerValue]
+                                                                   multiplier:1
+                                                                     constant:[pred[@"object"] doubleValue]
+                                                                     priority:[pred[@"priority"] floatValue]];
                }
            })?
            { $$ = PopStack(); PopView(); PopOrientation(); }
@@ -119,17 +108,12 @@ ViewDef  = LBRACKET
                }
                (preds:PredicateList {
                    for(NSDictionary *pred in preds) {
-                       NSLayoutConstraint * const constr = [NSLayoutConstraint
-                                                            constraintWithItem:CurrView
-                                                            attribute:VLLAxisToDimension([pred[@"orientation"] integerValue])
-                                                            relatedBy:[pred[@"relation"] integerValue]
-                                                            toItem:nil
-                                                            attribute:NSLayoutAttributeNotAnAttribute
-                                                            multiplier:1
-                                                            constant:[pred[@"object"] doubleValue]];
-                       if([pred[@"priority"] floatValue] > 0)
-                           constr.priority = [pred[@"priority"] floatValue];
-                       [LastView addConstraint:constr];
+                       [NSLayoutConstraint vll_addSizeConstraintsForAxis:[pred[@"orientation"] integerValue]
+                                                                  onView:CurrView
+                                                        toViewOrConstant:pred[@"object"]
+                                                               relatedBy:[pred[@"relation"] integerValue]
+                                                              multiplier:1
+                                                                priority:[pred[@"priority"] integerValue]];
                    }
                })?
                Messages?
@@ -144,17 +128,12 @@ ViewIdent =                   { $$ = nil; }
 ViewRef = LBRACKET ident:IDENT { PushStack(yy->views[ident]); }
           (preds:PredicateList {
               for(NSDictionary *pred in preds) {
-                  NSLayoutConstraint * const constr = [NSLayoutConstraint
-                                                       constraintWithItem:StackTop
-                                                       attribute:VLLAxisToDimension([pred[@"orientation"] integerValue])
-                                                       relatedBy:[pred[@"relation"] integerValue]
-                                                       toItem:nil
-                                                       attribute:NSLayoutAttributeNotAnAttribute
-                                                       multiplier:1
-                                                       constant:[pred[@"object"] doubleValue]];
-                  if([pred[@"priority"] floatValue] > 0)
-                      constr.priority = [pred[@"priority"] floatValue];
-                  [LastView addConstraint:constr];
+                  [NSLayoutConstraint vll_addSizeConstraintsForAxis:[pred[@"orientation"] integerValue]
+                                                             onView:StackTop
+                                                   toViewOrConstant:pred[@"object"]
+                                                          relatedBy:[pred[@"relation"] integerValue]
+                                                         multiplier:1
+                                                           priority:[pred[@"priority"] integerValue]];
               }
           })? RBRACKET { $$ = PopStack(); }
 
@@ -183,7 +162,7 @@ SelPart  = IDENT|CONST
 Conn     = DASH preds:PredicateList DASH { $$ = preds; }
          | DASH { $$ = @[@{ @"object": @20, @"relation": @(NSLayoutRelationEqual), @"orientation": Orientation }]; }
 
-PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": yy->views[obj] ?: obj,
+PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": obj,
                                           @"relation": @(NSLayoutRelationEqual),
                                           @"orientation": Orientation }]; }
               | LPAREN { PushOrientation(); }
@@ -198,20 +177,24 @@ Predicate = Axis?
                 obj:ObjOfPred
                 prio:Priority {
     $$ = @{ @"relation": rel,
-            @"object": yy->views[obj] ?: obj,
+            @"object": obj,
             @"priority": prio,
             @"orientation": Orientation };
 }
 
-Priority = { $$ = @50 } (AT p:NUMBER ~{ SyntaxError(@"Incomplete priority"); }
-                                      { $$ = p; })?
-ObjOfPred = NUMBER|IDENT
+Priority = { $$ = @0 } (AT p:NUMBER ~{ SyntaxError(@"Incomplete priority"); }
+                                     { $$ = p; })?
+ObjOfPred = number:NUMBER { $$ = number; }
+| name:IDENT    { $$ = yy->views[name]; if(!$$) SyntaxError(@"View %@ doesn't exist", name); }
 
 
 Axis     = 'V' COLON ~{ SyntaxError(@"Expected colon"); }
                       { $$ = @(VLLLayoutConstraintAxisVertical);   SetOrientation($$); }
          | 'H' COLON ~{ SyntaxError(@"Expected colon"); }
                       { $$ = @(VLLLayoutConstraintAxisHorizontal); SetOrientation($$); }
+         | 'X' COLON ~{ SyntaxError(@"Expected colon"); }
+                      { $$ = @(VLLLayoutConstraintAxisHorizontal | VLLLayoutConstraintAxisVertical);
+                        SetOrientation($$); }
 
 
 Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }

@@ -36,8 +36,10 @@
 		C74CC06218B90A100070945E /* test.vll in Resources */ = {isa = PBXBuildFile; fileRef = C74CC06018B90A100070945E /* test.vll */; };
 		C74CC06518B90A2A0070945E /* VLL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74CBFEC18B908B30070945E /* VLL.framework */; };
 		C74CC06718B90A890070945E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C74CC06618B90A890070945E /* MainMenu.xib */; };
-		C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */; };
+		C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C74CC06B18B90C970070945E /* NSInvocation+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */; };
+		C786DE8918B944330076A174 /* NSLayoutConstraint+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C786DE8718B944330076A174 /* NSLayoutConstraint+VLLExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C786DE8A18B944330076A174 /* NSLayoutConstraint+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,8 @@
 		C74CC06618B90A890070945E /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+VLLExtensions.h"; sourceTree = "<group>"; };
 		C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+VLLExtensions.m"; sourceTree = "<group>"; };
+		C786DE8718B944330076A174 /* NSLayoutConstraint+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+VLLExtensions.h"; sourceTree = "<group>"; };
+		C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+VLLExtensions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +179,8 @@
 				C74CC01B18B908FF0070945E /* NSString+VLLExtensions.m */,
 				C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */,
 				C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */,
+				C786DE8718B944330076A174 /* NSLayoutConstraint+VLLExtensions.h */,
+				C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -211,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C74CC02218B908FF0070945E /* VLLParser.h in Headers */,
+				C786DE8918B944330076A174 /* NSLayoutConstraint+VLLExtensions.h in Headers */,
 				C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */,
 				C74CC01F18B908FF0070945E /* NSString+VLLExtensions.h in Headers */,
 			);
@@ -335,6 +342,7 @@
 			files = (
 				C74CC02018B908FF0070945E /* NSString+VLLExtensions.m in Sources */,
 				C74CC02318B908FF0070945E /* VLLParser.m in Sources */,
+				C786DE8A18B944330076A174 /* NSLayoutConstraint+VLLExtensions.m in Sources */,
 				C74CC06B18B90C970070945E /* NSInvocation+VLLExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,6 +564,7 @@
 				C74CC01618B908B30070945E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C74CC02718B909490070945E /* Build configuration list for PBXAggregateTarget "Generate Parser" */ = {
 			isa = XCConfigurationList;
@@ -564,6 +573,7 @@
 				C74CC02918B909490070945E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C74CC05818B909EC0070945E /* Build configuration list for PBXNativeTarget "Mac Demo" */ = {
 			isa = XCConfigurationList;
@@ -572,6 +582,7 @@
 				C74CC05A18B909EC0070945E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
