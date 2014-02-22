@@ -33,9 +33,18 @@
                                                                                    : NSLayoutAttributeTop
     #define VLLAxisToTrailingEdge(axis) (axis) == VLLLayoutConstraintAxisHorizontal ? NSLayoutAttributeTrailing \
                                                                                     : NSLayoutAttributeBottom
+    
+    #define SyntaxError(...) do { \
+        int line = 1; \
+        for(int i = 0; i < yy->__pos; ++i) { \
+            if(yy->__buf[i] == '\n') ++line; \
+        } \
+        NSString *msg = [NSString stringWithFormat:__VA_ARGS__]; \
+        [NSException raise:@"Syntax error" format:@"Line %d: Syntax error! %@", line, (msg)]; \
+    } while(0)
 %}
 
-Layout   = Rule+ EOF
+Layout   = - Rule+ EOF
 
 Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            Axis?
@@ -127,7 +136,7 @@ ViewDef  = LBRACKET
            RBRACKET
            (LBRACE
                rule:Rule*
-            RBRACE)? { $$ = PopView(); PopStack(); }
+            RBRACE ~{ SyntaxError(@"Unterminated curly brace"); })? { $$ = PopView(); PopStack(); }
 
 ViewIdent =                   { $$ = nil; }
             (HASH ident:IDENT { $$ = ident; })?
@@ -184,19 +193,25 @@ PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": yy->views[obj] ?: obj,
                     PopOrientation();
                     $$ = PopStack();
                 }
-Predicate = Axis? rel:Relation obj:ObjOfPred prio:Priority {
+Predicate = Axis?
+                rel:Relation ~{ SyntaxError(@"Expected ==/>=/<="); }
+                obj:ObjOfPred
+                prio:Priority {
     $$ = @{ @"relation": rel,
             @"object": yy->views[obj] ?: obj,
             @"priority": prio,
             @"orientation": Orientation };
 }
 
-Priority = { $$ = @50 } (AT p:NUMBER { $$ = p; })?
+Priority = { $$ = @50 } (AT p:NUMBER ~{ SyntaxError(@"Incomplete priority"); }
+                                      { $$ = p; })?
 ObjOfPred = NUMBER|IDENT
 
 
-Axis     = 'V' COLON { $$ = @(VLLLayoutConstraintAxisVertical);   SetOrientation($$); }
-         | 'H' COLON { $$ = @(VLLLayoutConstraintAxisHorizontal); SetOrientation($$); }
+Axis     = 'V' COLON ~{ SyntaxError(@"Expected colon"); }
+                      { $$ = @(VLLLayoutConstraintAxisVertical);   SetOrientation($$); }
+         | 'H' COLON ~{ SyntaxError(@"Expected colon"); }
+                      { $$ = @(VLLLayoutConstraintAxisHorizontal); SetOrientation($$); }
 
 
 Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
