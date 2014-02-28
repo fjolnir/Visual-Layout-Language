@@ -82,7 +82,7 @@
 		C74CC04518B909EC0070945E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C74CC05E18B90A100070945E /* FAAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAAppDelegate.h; sourceTree = "<group>"; };
 		C74CC05F18B90A100070945E /* FAAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAAppDelegate.m; sourceTree = "<group>"; };
-		C74CC06018B90A100070945E /* test.vll */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.vll; sourceTree = "<group>"; };
+		C74CC06018B90A100070945E /* test.vll */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.vll; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		C74CC06618B90A890070945E /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+VLLExtensions.h"; sourceTree = "<group>"; };
 		C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+VLLExtensions.m"; sourceTree = "<group>"; };

@@ -51,26 +51,26 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            Axis?
            (PIPE c:Conn { StackTop[@"leadingConstraints"] = c; })?
            View {
-               PushView($$);
                if(StackTop[@"leadingConstraints"]) {
                    for(NSDictionary *pred in StackTop[@"leadingConstraints"]) {
                         [NSLayoutConstraint vll_addLeadingEdgeConstraintsForAxis:[pred[@"orientation"] integerValue]
-                                                                            view:CurrView
-                                                                       superview:LastView
+                                                                            view:$$
+                                                                       superview:CurrView
                                                                        relatedBy:[pred[@"relation"] integerValue]
                                                                       multiplier:1
                                                                         constant:[pred[@"object"] doubleValue]
                                                                         priority:[pred[@"priority"] floatValue]];
                    }
                }
+               PushStack($$);
            }
            (c:Conn connectedView:View {
-               VLLView * const previousView = PopView();
-               PushView(connectedView);
+               VLLView * const previousView = PopStack();
+               PushStack(connectedView);
                
                for(NSDictionary *pred in c) {
                     [NSLayoutConstraint vll_addSpacingConstraintsForAxis:[pred[@"orientation"] integerValue]
-                                                               firstView:CurrView
+                                                               firstView:StackTop
                                                               secondView:previousView
                                                                relatedBy:[pred[@"relation"] integerValue]
                                                               multiplier:1
@@ -81,15 +81,15 @@ Rule     = { PushStack([NSMutableDictionary dictionary]); PushOrientation(); }
            (c:Conn PIPE {
                for(NSDictionary *pred in c) {
                     [NSLayoutConstraint vll_addTrailingEdgeConstraintsForAxis:[pred[@"orientation"] integerValue]
-                                                                         view:CurrView
-                                                                    superview:LastView
+                                                                         view:StackTop
+                                                                    superview:CurrView
                                                                     relatedBy:[pred[@"relation"] integerValue]
                                                                    multiplier:1
                                                                      constant:[pred[@"object"] doubleValue]
                                                                      priority:[pred[@"priority"] floatValue]];
                }
            })?
-           { $$ = PopStack(); PopView(); PopOrientation(); }
+           { PopStack(); $$ = PopStack(); PopOrientation(); }
 
 
 ## Views
@@ -102,6 +102,7 @@ ViewDef  = LBRACKET
                    if(!CurrView || CurrView == yy->container)
                        [yy->rootViews addObject:view];
                    [CurrView addSubview:view];
+//                   NSLog(@"Creating %@ in %@", view, CurrView);
                    PushView(view);
                    PushStack(view); // Messages are sent to the object at the top of the stack
                    if(ident) yy->views[ident] = view;
@@ -117,10 +118,11 @@ ViewDef  = LBRACKET
                    }
                })?
                Messages?
-           RBRACKET
+           RBRACKET ~{ SyntaxError(@"Unterminated view definition"); }
            (LBRACE
-               rule:Rule*
-            RBRACE ~{ SyntaxError(@"Unterminated curly brace"); })? { $$ = PopView(); PopStack(); }
+               Rule*
+            RBRACE ~{ SyntaxError(@"Unterminated curly brace"); } )?
+           { $$ = PopView(); PopStack(); }
 
 ViewIdent =                   { $$ = nil; }
             (HASH ident:IDENT { $$ = ident; })?
@@ -135,7 +137,8 @@ ViewRef = LBRACKET view:IDENT { view = yy->views[view]; }
                                                          multiplier:1
                                                            priority:[pred[@"priority"] integerValue]];
               }
-          })? RBRACKET { $$ = view; }
+          })? RBRACKET ~{ SyntaxError(@"Unterminated view reference"); }
+                        { $$ = view; }
 
 
 ## Message passing
@@ -152,43 +155,48 @@ Message  = { PushStack(@{  @"selector": [NSMutableString string],
              })+
             | name:SelPart { [StackTop[@"selector"] setString:name] })
            {
-               $$ = PopStack();
+               NSDictionary * const msg = PopStack();
                $$ = [yy->parserObj _sendMessageTo:StackTop
-                                         selector:NSSelectorFromString($$[@"selector"])
-                                        arguments:$$[@"arguments"]];
+                                         selector:NSSelectorFromString(msg[@"selector"])
+                                        arguments:msg[@"arguments"]];
            }
 
 SelPart  = IDENT|CONST
 
 
 ## Connections / Predicates
-Conn     = DASH preds:PredicateList DASH { $$ = preds; }
+Conn     = DASH preds:Predicates DASH { $$ = preds; }
          | DASH { $$ = @[@{ @"object": @20, @"relation": @(NSLayoutRelationEqual), @"orientation": Orientation }]; }
 
-PredicateList = obj:ObjOfPred { $$ = @[@{ @"object": obj,
-                                          @"relation": @(NSLayoutRelationEqual),
-                                          @"orientation": Orientation }]; }
-              | LPAREN { PushOrientation(); }
+Predicates = obj:ObjOfPred { $$ = @[@{ @"object": obj,
+                                       @"relation": @(NSLayoutRelationEqual),
+                                       @"orientation": Orientation }]; }
+           | PredicateList
+
+PredicateList = LPAREN { PushOrientation(); }
                     preds:Predicate { preds = [NSMutableArray arrayWithObject:preds]; }
                     (COMMA pred:Predicate { [preds addObject:pred]; })*
                 RPAREN {
                     PopOrientation();
                     $$ = preds;
                 }
-Predicate = Axis?
-                rel:Relation ~{ SyntaxError(@"Expected ==/>=/<="); }
-                obj:ObjOfPred
-                prio:Priority {
+Predicate = orientation:PredicateOrientation
+            rel:Relation ~{ SyntaxError(@"Expected ==/>=/<="); }
+            obj:ObjOfPred
+            prio:Priority {
     $$ = @{ @"relation": rel,
             @"object": obj,
             @"priority": prio,
-            @"orientation": Orientation };
+            @"orientation": orientation };
 }
+
+PredicateOrientation = [wW] - { $$ = @(VLLLayoutConstraintAxisHorizontal); }
+                     | [hH] - { $$ = @(VLLLayoutConstraintAxisVertical); }
 
 Priority = { $$ = @0 } (AT p:NUMBER ~{ SyntaxError(@"Incomplete priority"); }
                                      { $$ = p; })?
 ObjOfPred = number:NUMBER { $$ = number; }
-| name:IDENT    { $$ = yy->views[name]; if(!$$) SyntaxError(@"View %@ doesn't exist", name); }
+          | name:IDENT    { $$ = yy->views[name]; if(!$$) SyntaxError(@"View %@ doesn't exist", name); }
 
 
 Axis     = 'V' COLON ~{ SyntaxError(@"Expected colon"); }
@@ -206,9 +214,9 @@ Relation  = LEQ { $$ = @(NSLayoutRelationLessThanOrEqual); }
 
 
 ## Literals
-Literal   = NUMBER|STRING|Function|Object
+Literal   = NUMBER|STRING|Function|ViewObject|Object
 
-Function  = '$' name:CONST LPAREN {
+Function  = name:CONST LPAREN {
                 PushStack([NSMutableArray array]);
                 name = [name lowercaseString];
             }
@@ -217,8 +225,15 @@ Function  = '$' name:CONST LPAREN {
             RPAREN {
     $$ = [yy->parserObj _resolveFunction:name withParameters:PopStack()];
 }
-Object    = '$[' klass:CONST { PushStack(NSClassFromString(klass)); }
-                 m:Message ']' { $$ = m; PopStack(); }
+ViewObject = view:Object LBRACE  { PushView(view); PushStack(view); NSLog(@"Opening view obj %@", view); }
+                             Rule*
+                         RBRACE ~{ SyntaxError(@"Unterminated view definition object"); }
+                                 { $$ = PopView(); PopStack();  NSLog(@"Closing view obj! %@", $$); }
+Object = LBRACKET ( klass:CONST { PushStack(NSClassFromString(klass)); }
+                  | obj:Object  { PushStack(obj); })
+             m:Messages
+         RBRACKET ~{ SyntaxError(@"Unterminated message"); }
+                   { $$ = m; PopStack(); }
 
 
 ## Tokens
