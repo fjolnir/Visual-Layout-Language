@@ -113,6 +113,13 @@
 - (id)_sendMessageTo:(id const)aTarget selector:(SEL const)aSel arguments:(NSArray * const)aArgs
 {
     NSMethodSignature * const sig = [aTarget methodSignatureForSelector:aSel];
+    if(!sig) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                       reason:[NSString stringWithFormat:@"%@ does not respond to %@",
+                                               aTarget, NSStringFromSelector(aSel)]
+                                     userInfo:nil];
+        return nil;
+    }
     NSInvocation * const invoc = [NSInvocation invocationWithMethodSignature:sig];
     invoc.target = aTarget;
     invoc.selector = aSel;
