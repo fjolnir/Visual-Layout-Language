@@ -1,18 +1,19 @@
 #if TARGET_OS_IPHONE
-@import UIKit;
-#define VLLView UIView
-#define VLLColor UIColor
-#define VLLLayoutConstraintAxisHorizontal UILayoutConstraintAxisHorizontal
-#define VLLLayoutConstraintAxisVertical UILayoutConstraintAxisVertical
+    @import UIKit;
+    #define VLLView UIView
+    #define VLLColor UIColor
+    typedef UILayoutPriority VLLLayoutPriority;
 #else
-@import Cocoa;
-#define VLLView NSView
-#define VLLColor NSColor
+    @import Cocoa;
+    #define VLLView NSView
+    #define VLLColor NSColor
+    typedef NSLayoutPriority VLLLayoutPriority;
+#endif
+
 typedef NS_ENUM(NSInteger, VLLLayoutConstraintAxis) {
     VLLLayoutConstraintAxisHorizontal = 1,
     VLLLayoutConstraintAxisVertical   = 1 << 1
 };
-#endif
 
 @interface VLLParser : NSObject
 + (VLLParser *)vllWithVLLName:(NSString *)aVLLName bundle:(NSBundle *)aBundle;

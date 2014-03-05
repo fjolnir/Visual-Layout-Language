@@ -38,6 +38,22 @@
 		C74CC06718B90A890070945E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C74CC06618B90A890070945E /* MainMenu.xib */; };
 		C74CC06A18B90C970070945E /* NSInvocation+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C74CC06B18B90C970070945E /* NSInvocation+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */; };
+		C75258FF18C2233B00E8BDD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C75258FE18C2233B00E8BDD4 /* Foundation.framework */; };
+		C752590118C2233B00E8BDD4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C752590018C2233B00E8BDD4 /* CoreGraphics.framework */; };
+		C752590318C2233B00E8BDD4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C752590218C2233B00E8BDD4 /* UIKit.framework */; };
+		C752590918C2233B00E8BDD4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C752590718C2233B00E8BDD4 /* InfoPlist.strings */; };
+		C752590B18C2233B00E8BDD4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C752590A18C2233B00E8BDD4 /* main.m */; };
+		C752590F18C2233B00E8BDD4 /* FAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C752590E18C2233B00E8BDD4 /* FAAppDelegate.m */; };
+		C752591118C2233B00E8BDD4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C752591018C2233B00E8BDD4 /* Images.xcassets */; };
+		C752593118C2238500E8BDD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C75258FE18C2233B00E8BDD4 /* Foundation.framework */; };
+		C752595418C223EC00E8BDD4 /* VLLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC01E18B908FF0070945E /* VLLParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-unused-variable -Wno-unused-function"; }; };
+		C752595518C223EC00E8BDD4 /* NSString+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC01B18B908FF0070945E /* NSString+VLLExtensions.m */; };
+		C752595618C223EC00E8BDD4 /* NSInvocation+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */; };
+		C752595718C223EC00E8BDD4 /* NSLayoutConstraint+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */; };
+		C752595818C223F400E8BDD4 /* VLLParser.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = C74CC01D18B908FF0070945E /* VLLParser.h */; };
+		C752595B18C225EC00E8BDD4 /* libvll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C752593018C2238500E8BDD4 /* libvll.a */; };
+		C752595E18C2260900E8BDD4 /* FAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C752595D18C2260900E8BDD4 /* FAViewController.m */; };
+		C752596018C226C200E8BDD4 /* FAViewController.vll in Resources */ = {isa = PBXBuildFile; fileRef = C752595F18C226C200E8BDD4 /* FAViewController.vll */; };
 		C786DE8918B944330076A174 /* NSLayoutConstraint+VLLExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C786DE8718B944330076A174 /* NSLayoutConstraint+VLLExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C786DE8A18B944330076A174 /* NSLayoutConstraint+VLLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */; };
 /* End PBXBuildFile section */
@@ -57,7 +73,35 @@
 			remoteGlobalIDString = C74CBFEB18B908B30070945E;
 			remoteInfo = VLL;
 		};
+		C752595218C223DD00E8BDD4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C74CBFE318B908B30070945E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C74CC02618B909490070945E;
+			remoteInfo = "Generate Parser";
+		};
+		C752595918C225CB00E8BDD4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C74CBFE318B908B30070945E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C752592F18C2238500E8BDD4;
+			remoteInfo = "VLL iPhone";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C752592E18C2238500E8BDD4 /* Copy Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				C752595818C223F400E8BDD4 /* VLLParser.h in Copy Headers */,
+			);
+			name = "Copy Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C74CBFEC18B908B30070945E /* VLL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VLL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +130,21 @@
 		C74CC06618B90A890070945E /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		C74CC06818B90C970070945E /* NSInvocation+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+VLLExtensions.h"; sourceTree = "<group>"; };
 		C74CC06918B90C970070945E /* NSInvocation+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+VLLExtensions.m"; sourceTree = "<group>"; };
+		C75258FD18C2233B00E8BDD4 /* iPhone Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iPhone Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C75258FE18C2233B00E8BDD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C752590018C2233B00E8BDD4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		C752590218C2233B00E8BDD4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		C752590618C2233B00E8BDD4 /* iPhone Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPhone Demo-Info.plist"; sourceTree = "<group>"; };
+		C752590818C2233B00E8BDD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C752590A18C2233B00E8BDD4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C752590C18C2233B00E8BDD4 /* iPhone Demo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iPhone Demo-Prefix.pch"; sourceTree = "<group>"; };
+		C752590D18C2233B00E8BDD4 /* FAAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FAAppDelegate.h; sourceTree = "<group>"; };
+		C752590E18C2233B00E8BDD4 /* FAAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FAAppDelegate.m; sourceTree = "<group>"; };
+		C752591018C2233B00E8BDD4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		C752593018C2238500E8BDD4 /* libvll.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libvll.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C752595C18C2260900E8BDD4 /* FAViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAViewController.h; sourceTree = "<group>"; };
+		C752595D18C2260900E8BDD4 /* FAViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAViewController.m; sourceTree = "<group>"; };
+		C752595F18C226C200E8BDD4 /* FAViewController.vll */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FAViewController.vll; sourceTree = "<group>"; };
 		C786DE8718B944330076A174 /* NSLayoutConstraint+VLLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLayoutConstraint+VLLExtensions.h"; sourceTree = "<group>"; };
 		C786DE8818B944330076A174 /* NSLayoutConstraint+VLLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLayoutConstraint+VLLExtensions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,6 +167,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C75258FA18C2233B00E8BDD4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C752595B18C225EC00E8BDD4 /* libvll.a in Frameworks */,
+				C752590118C2233B00E8BDD4 /* CoreGraphics.framework in Frameworks */,
+				C752590318C2233B00E8BDD4 /* UIKit.framework in Frameworks */,
+				C75258FF18C2233B00E8BDD4 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C752592D18C2238500E8BDD4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C752593118C2238500E8BDD4 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -116,6 +194,7 @@
 			children = (
 				C74CBFF518B908B30070945E /* VLL */,
 				C74CC03318B909EC0070945E /* Mac Demo */,
+				C752590418C2233B00E8BDD4 /* iPhone Demo */,
 				C74CBFEE18B908B30070945E /* Frameworks */,
 				C74CBFED18B908B30070945E /* Products */,
 			);
@@ -126,6 +205,8 @@
 			children = (
 				C74CBFEC18B908B30070945E /* VLL.framework */,
 				C74CC03118B909EC0070945E /* Mac Demo.app */,
+				C75258FD18C2233B00E8BDD4 /* iPhone Demo.app */,
+				C752593018C2238500E8BDD4 /* libvll.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +216,9 @@
 			children = (
 				C74CBFEF18B908B30070945E /* Cocoa.framework */,
 				C74CC00418B908B30070945E /* XCTest.framework */,
+				C75258FE18C2233B00E8BDD4 /* Foundation.framework */,
+				C752590018C2233B00E8BDD4 /* CoreGraphics.framework */,
+				C752590218C2233B00E8BDD4 /* UIKit.framework */,
 				C74CBFF118B908B30070945E /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -209,6 +293,31 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		C752590418C2233B00E8BDD4 /* iPhone Demo */ = {
+			isa = PBXGroup;
+			children = (
+				C752590D18C2233B00E8BDD4 /* FAAppDelegate.h */,
+				C752590E18C2233B00E8BDD4 /* FAAppDelegate.m */,
+				C752595C18C2260900E8BDD4 /* FAViewController.h */,
+				C752595D18C2260900E8BDD4 /* FAViewController.m */,
+				C752595F18C226C200E8BDD4 /* FAViewController.vll */,
+				C752591018C2233B00E8BDD4 /* Images.xcassets */,
+				C752590518C2233B00E8BDD4 /* Supporting Files */,
+			);
+			path = "iPhone Demo";
+			sourceTree = "<group>";
+		};
+		C752590518C2233B00E8BDD4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C752590618C2233B00E8BDD4 /* iPhone Demo-Info.plist */,
+				C752590718C2233B00E8BDD4 /* InfoPlist.strings */,
+				C752590A18C2233B00E8BDD4 /* main.m */,
+				C752590C18C2233B00E8BDD4 /* iPhone Demo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -226,9 +335,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C74CBFEB18B908B30070945E /* VLL */ = {
+		C74CBFEB18B908B30070945E /* VLL Mac */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C74CC01418B908B30070945E /* Build configuration list for PBXNativeTarget "VLL" */;
+			buildConfigurationList = C74CC01418B908B30070945E /* Build configuration list for PBXNativeTarget "VLL Mac" */;
 			buildPhases = (
 				C74CBFE718B908B30070945E /* Sources */,
 				C74CBFE818B908B30070945E /* Frameworks */,
@@ -240,7 +349,7 @@
 			dependencies = (
 				C74CC02C18B9098A0070945E /* PBXTargetDependency */,
 			);
-			name = VLL;
+			name = "VLL Mac";
 			productName = VLL;
 			productReference = C74CBFEC18B908B30070945E /* VLL.framework */;
 			productType = "com.apple.product-type.framework";
@@ -262,6 +371,42 @@
 			productName = "Mac Demo";
 			productReference = C74CC03118B909EC0070945E /* Mac Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		C75258FC18C2233B00E8BDD4 /* iPhone Demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C752592418C2233B00E8BDD4 /* Build configuration list for PBXNativeTarget "iPhone Demo" */;
+			buildPhases = (
+				C75258F918C2233B00E8BDD4 /* Sources */,
+				C75258FA18C2233B00E8BDD4 /* Frameworks */,
+				C75258FB18C2233B00E8BDD4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C752595A18C225CB00E8BDD4 /* PBXTargetDependency */,
+			);
+			name = "iPhone Demo";
+			productName = "iPhone Demo";
+			productReference = C75258FD18C2233B00E8BDD4 /* iPhone Demo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C752592F18C2238500E8BDD4 /* VLL iPhone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C752594C18C2238500E8BDD4 /* Build configuration list for PBXNativeTarget "VLL iPhone" */;
+			buildPhases = (
+				C752592C18C2238500E8BDD4 /* Sources */,
+				C752592D18C2238500E8BDD4 /* Frameworks */,
+				C752592E18C2238500E8BDD4 /* Copy Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C752595318C223DD00E8BDD4 /* PBXTargetDependency */,
+			);
+			name = "VLL iPhone";
+			productName = "VLL iPhone";
+			productReference = C752593018C2238500E8BDD4 /* libvll.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -285,9 +430,11 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C74CBFEB18B908B30070945E /* VLL */,
+				C74CBFEB18B908B30070945E /* VLL Mac */,
+				C752592F18C2238500E8BDD4 /* VLL iPhone */,
 				C74CC02618B909490070945E /* Generate Parser */,
 				C74CC03018B909EC0070945E /* Mac Demo */,
+				C75258FC18C2233B00E8BDD4 /* iPhone Demo */,
 			);
 		};
 /* End PBXProject section */
@@ -310,6 +457,16 @@
 				C74CC06718B90A890070945E /* MainMenu.xib in Resources */,
 				C74CC06218B90A100070945E /* test.vll in Resources */,
 				C74CC04618B909EC0070945E /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C75258FB18C2233B00E8BDD4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C752596018C226C200E8BDD4 /* FAViewController.vll in Resources */,
+				C752590918C2233B00E8BDD4 /* InfoPlist.strings in Resources */,
+				C752591118C2233B00E8BDD4 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +513,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C75258F918C2233B00E8BDD4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C752590B18C2233B00E8BDD4 /* main.m in Sources */,
+				C752590F18C2233B00E8BDD4 /* FAAppDelegate.m in Sources */,
+				C752595E18C2260900E8BDD4 /* FAViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C752592C18C2238500E8BDD4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C752595418C223EC00E8BDD4 /* VLLParser.m in Sources */,
+				C752595518C223EC00E8BDD4 /* NSString+VLLExtensions.m in Sources */,
+				C752595618C223EC00E8BDD4 /* NSInvocation+VLLExtensions.m in Sources */,
+				C752595718C223EC00E8BDD4 /* NSLayoutConstraint+VLLExtensions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -366,8 +544,18 @@
 		};
 		C74CC06418B90A260070945E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C74CBFEB18B908B30070945E /* VLL */;
+			target = C74CBFEB18B908B30070945E /* VLL Mac */;
 			targetProxy = C74CC06318B90A260070945E /* PBXContainerItemProxy */;
+		};
+		C752595318C223DD00E8BDD4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C74CC02618B909490070945E /* Generate Parser */;
+			targetProxy = C752595218C223DD00E8BDD4 /* PBXContainerItemProxy */;
+		};
+		C752595A18C225CB00E8BDD4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C752592F18C2238500E8BDD4 /* VLL iPhone */;
+			targetProxy = C752595918C225CB00E8BDD4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -384,6 +572,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				C74CC03718B909EC0070945E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		C752590718C2233B00E8BDD4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C752590818C2233B00E8BDD4 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -481,7 +677,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VLL/VLL-Prefix.pch";
 				INFOPLIST_FILE = "VLL/VLL-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = VLL;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -496,7 +692,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VLL/VLL-Prefix.pch";
 				INFOPLIST_FILE = "VLL/VLL-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = VLL;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -545,6 +741,94 @@
 			};
 			name = Release;
 		};
+		C752592518C2233B00E8BDD4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPhone Demo/iPhone Demo-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iPhone Demo/iPhone Demo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		C752592618C2233B00E8BDD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPhone Demo/iPhone Demo-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iPhone Demo/iPhone Demo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		C752594D18C2238500E8BDD4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				DSTROOT = /tmp/VLL_iPhone.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VLL/VLL-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = vll;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C752594E18C2238500E8BDD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				DSTROOT = /tmp/VLL_iPhone.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "VLL/VLL-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = vll;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -557,7 +841,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C74CC01418B908B30070945E /* Build configuration list for PBXNativeTarget "VLL" */ = {
+		C74CC01418B908B30070945E /* Build configuration list for PBXNativeTarget "VLL Mac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C74CC01518B908B30070945E /* Debug */,
@@ -583,6 +867,22 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		C752592418C2233B00E8BDD4 /* Build configuration list for PBXNativeTarget "iPhone Demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C752592518C2233B00E8BDD4 /* Debug */,
+				C752592618C2233B00E8BDD4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C752594C18C2238500E8BDD4 /* Build configuration list for PBXNativeTarget "VLL iPhone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C752594D18C2238500E8BDD4 /* Debug */,
+				C752594E18C2238500E8BDD4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

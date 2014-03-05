@@ -14,7 +14,7 @@
                                      relatedBy:(NSLayoutRelation const)aRelation
                                     multiplier:(CGFloat const)aMultiplier
                                       constant:(CGFloat const)aConstant
-                                      priority:(NSLayoutPriority const)aPriority
+                                      priority:(VLLLayoutPriority const)aPriority
 {
     NSMutableArray * const constraints = [NSMutableArray array];
     
@@ -51,7 +51,7 @@
                                       relatedBy:(NSLayoutRelation const)aRelation
                                      multiplier:(CGFloat const)aMultiplier
                                        constant:(CGFloat const)aConstant
-                                       priority:(NSLayoutPriority const)aPriority
+                                       priority:(VLLLayoutPriority const)aPriority
 {
     NSMutableArray * const constraints = [NSMutableArray array];
     
@@ -88,7 +88,7 @@
                                  relatedBy:(NSLayoutRelation const)aRelation
                                 multiplier:(CGFloat const)aMultiplier
                                   constant:(CGFloat const)aConstant
-                                  priority:(NSLayoutPriority const)aPriority
+                                  priority:(VLLLayoutPriority const)aPriority
 {
     NSMutableArray * const constraints = [NSMutableArray array];
     
@@ -124,7 +124,7 @@
                        toViewOrConstant:(id)aSource
                               relatedBy:(NSLayoutRelation const)aRelation
                              multiplier:(CGFloat const)aMultiplier
-                               priority:(NSLayoutPriority const)aPriority
+                               priority:(VLLLayoutPriority const)aPriority
 {
     NSMutableArray * const constraints = [NSMutableArray array];
     
